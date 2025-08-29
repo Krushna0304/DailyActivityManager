@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activities - Daily Activity Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .form-section h3 {
+            margin-bottom: 20px;
+            color: #4a5568;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        #activityForm {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+        }
+
+        @media (max-width: 480px) {
+            #activityForm {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .activities-section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .activities-section h3 {
+            margin-bottom: 20px;
+            color: #4a5568;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        #activityList {
+            list-style: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .activity-item:hover::before {
+            width: 8px;
+        }
+
+        .activity-info {
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .activity-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+
+        .activity-meta {
+            font-size: 14px;
+            color: #718096;
+            display: flex;
+            gap: 15px;
+        }
+
+        .activity-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #718096;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state-subtext {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .navigation-link {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin: 0 auto;
+            display: block;
+            max-width: 200px;
+        }
+
+        .navigation-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .success-message, .error-message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #6c6;
+        }
+
+        .error-message {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c66;
+        }
+
+        .success-message.show, .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Edit mode styles */
+        .activity-item.editing .activity-name {
+            display: none;
+        }
+
+        .activity-item.editing .edit-input {
+            display: block;
+        }
+
+        .edit-input {
+            display: none;
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            margin-right: 10px;
+        }
+
+        .edit-actions {
+            display: none;
+            gap: 5px;
+        }
+
+        .activity-item.editing .edit-actions {
+            display: flex;
+        }
+
+        .activity-item.editing .activity-actions {
+            display: none;
+        }
+
+        .btn-save, .btn-cancel {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-save {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #cbd5e0;
+            color: #4a5568;
+        }
+
+        /* Loading animation */
+        .loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px;
+                margin: 10px;
+            }
+
+            h2 {
+                font-size: 28px;
+                margin-bottom: 25px;
+            }
+
+            .form-section, .activities-section {
+                padding: 20px;
+            }
+
+            .activity-item {
+                padding: 15px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .activity-info {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .activity-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .activity-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .btn-edit, .btn-delete {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            .edit-input {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+
+            .edit-actions {
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px 15px;
+                margin: 5px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            input[type="text"], button {
+                padding: 12px 16px;
+                font-size: 15px;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            }
+
+            .container {
+                background: rgba(45, 55, 72, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #e2e8f0;
+            }
+
+            .form-section, .activities-section {
+                background: rgba(45, 55, 72, 0.8);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .form-section h3, .activities-section h3 {
+                color: #e2e8f0;
+            }
+
+            .activity-item {
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+                border-color: rgba(102, 126, 234, 0.3);
+            }
+
+            .activity-name {
+                color: #e2e8f0;
+            }
+
+            .activity-meta {
+                color: #a0aec0;
+            }
+
+            input[type="text"] {
+                background: rgba(45, 55, 72, 0.8);
+                border-color: #4a5568;
+                color: #e2e8f0;
+            }
+
+            input[type="text"]:focus {
+                background: rgba(45, 55, 72, 1);
+            }
+
+            .edit-input {
+                background: rgba(45, 55, 72, 0.9);
+                color: #e2e8f0;
+            }
+
+            .empty-state {
+                color: #a0aec0;
+            }
+        }
+
+        /* Tablet optimizations */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .container {
+                max-width: 700px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Manage Activities</h2>
+
+    <div class="success-message" id="successMessage"></div>
+    <div class="error-message" id="errorMessage"></div>
+
+    <div class="form-section">
+        <h3>Add New Activity</h3>
+        <form id="activityForm">
+            <input type="text" id="activityName" placeholder="Enter activity name..." required>
+            <button type="submit">Add Activity</button>
+        </form>
+    </div>
+
+    <div class="activities-section">
+        <h3>Your Activities</h3>
+        <ul id="activityList">
+            <!-- Activities will be populated here -->
+        </ul>
+    </div>
+
+    <a href="dashboard.html" class="navigation-link">Back to Dashboard</a>
+</div>
+
+<script src="activities.js"></script>
+</body>
+</html>

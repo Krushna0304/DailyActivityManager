@@ -27,7 +27,7 @@ async function loadActivities() {
     }
 
     try {
-        const res = await fetch(`http://localhost:8082/api/activities?userId=${userId}`);
+        const res = await fetch(`http://43.204.36.150:8080/api/activities?userId=${userId}`);
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
         }
@@ -124,7 +124,7 @@ async function handleAddActivity(e) {
             }
         };
 
-        const res = await fetch("http://localhost:8082/api/activities", {
+        const res = await fetch("http://43.204.36.150:8080/api/activities", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -4,7 +4,7 @@ let activityChart;
 async function loadDashboard() {
     const userId = localStorage.getItem('userId');
     try {
-        const res = await fetch(`/api/logs/summary?userId=${userId}&range=daily`);
+        const res = await fetch(`http://43.204.36.150:8080/api/logs/summary?userId=${userId}&range=daily`);
         if (!res.ok) throw new Error('Failed to load dashboard data');
         const data = await res.json();
 
@@ -74,7 +74,7 @@ function updateChart(summaryData) {
 async function loadActivitiesForLogForm() {
     const userId = localStorage.getItem('userId');
     try {
-        const res = await fetch(`/api/activities?userId=${userId}`);
+        const res = await fetch(`http://43.204.36.150:8080/api/activities?userId=${userId}`);
         if (!res.ok) throw new Error('Failed to load activities');
         const activities = await res.json();
 
@@ -111,7 +111,7 @@ async function handleLogFormSubmit(e) {
             return;
         }
 
-        const res = await fetch('/api/logs', {
+        const res = await fetch('http://43.204.36.150:8080/api/logs', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

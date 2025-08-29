@@ -4,7 +4,7 @@
 // Example: You can import and use these functions in dashboard.js or other scripts.
 
 export async function logActivity({ userId, activityId, duration, notes, date }) {
-    const res = await fetch('/api/logs', {
+    const res = await fetch('http://43.204.36.150:8080/api/logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

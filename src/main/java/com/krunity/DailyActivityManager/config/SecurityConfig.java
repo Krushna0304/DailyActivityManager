@@ -11,7 +11,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 public class SecurityConfig {
@@ -19,35 +18,43 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors().configurationSource(corsConfigurationSource())
-            .and()
-            .csrf().disable()
-            .authorizeHttpRequests()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+                .csrf().disable()
+                .authorizeHttpRequests()
                 .requestMatchers(
-                    "/api/users/register",
-                    "/api/users/login",
-                    "/api/**",
-                    "/",
-                    "/index.html",
-                    "/signup.html",
-                    "/dashboard.html",
-                    "/activities.html",
-                    "/styles.css",
-                    "/*.js",
-                    "/static/**"
+                        "/api/users/register",
+                        "/api/users/login",
+                        "/api/**",
+                        "/",
+                        "/index.html",
+                        "/signup.html",
+                        "/dashboard.html",
+                        "/activities.html",
+                        "/styles.css",
+                        "/*.js",
+                        "/static/**"
                 ).permitAll()
                 .anyRequest().authenticated()
-            .and()
-            .formLogin().disable();
+                .and()
+                .formLogin().disable();
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:8082"));
+
+        // Add your frontend origins here
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:8080",
+                "http://127.0.0.1:5500",
+                "http://localhost:5500",
+                "http://activity-manager-test.s3-website.ap-south-1.amazonaws.com"
+        ));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
+        configuration.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 

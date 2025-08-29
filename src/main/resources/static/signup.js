@@ -6,7 +6,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        const response = await fetch('http://localhost:8082/api/users/register', {
+        const response = await fetch('http://43.204.36.150:8080/api/users/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
